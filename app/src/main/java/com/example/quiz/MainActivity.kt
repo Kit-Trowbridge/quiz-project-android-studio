@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -59,6 +60,7 @@ fun Quiz(
     ) {
         var answerInput by remember { mutableStateOf("")}
         var message by remember { mutableStateOf("")}
+        var messageColor by remember { mutableStateOf(Color.Black)}
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -87,7 +89,13 @@ fun Quiz(
                     answerInput = ""
                     // check if it's equal to answer (with regex?)
                     // Display a different message if it matches or not
-                    message = if (userAnswer == answer) "Correct!" else "Try again"
+                    if (userAnswer == answer) {
+                        message = "Correct!"
+                        messageColor = Color.Green
+                    } else {
+                        message = "Try again"
+                        messageColor = Color.Red
+                    }
                     // would also like to change color accordingly -- how to affect modifier in state
                     // maybe assign to variable
                 },
@@ -101,7 +109,8 @@ fun Quiz(
                 Modifier.height(25.dp)
             )
             Text(
-                text = message
+                text = message,
+                color = messageColor
             )
         }
     }
