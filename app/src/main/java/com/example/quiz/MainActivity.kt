@@ -59,8 +59,8 @@ fun Quiz(
         modifier = modifier
     ) {
         var answerInput by remember { mutableStateOf("")}
-        var message by remember { mutableStateOf("")}
-        var messageColor by remember { mutableStateOf(Color.Black)}
+        var messageProperties by remember { mutableStateOf(Pair("", Color.Black )) } // setting up pair to track & update when button clicked
+        val (messageText, messageColor) = messageProperties // destructuring to use separately in Text()
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -80,24 +80,11 @@ fun Quiz(
             )
             Button(
                 onClick = {
-                    println("Actual answer: $answer")
-                    // take / save? current answerInput value
                     val userAnswer: String = answerInput
-                    println("User's answer: $userAnswer")
-                    println("Equal? ${userAnswer == answer}")
                     // reset to 0
                     answerInput = ""
                     // check if it's equal to answer (with regex?)
-                    // Display a different message if it matches or not
-                    if (userAnswer == answer) {
-                        message = "Correct!"
-                        messageColor = Color.Green
-                    } else {
-                        message = "Try again"
-                        messageColor = Color.Red
-                    }
-                    // would also like to change color accordingly -- how to affect modifier in state
-                    // maybe assign to variable
+                    messageProperties = if (userAnswer == answer) Pair("Correct!", Color.Green) else Pair("Try again", Color.Red)
                 },
                 modifier = modifier
             ) {
@@ -109,7 +96,7 @@ fun Quiz(
                 Modifier.height(25.dp)
             )
             Text(
-                text = message,
+                text = messageText,
                 color = messageColor
             )
         }
