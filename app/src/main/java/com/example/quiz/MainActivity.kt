@@ -54,6 +54,10 @@ class MainActivity : ComponentActivity() {
 fun App() {
 
     val navController = rememberNavController()
+    val questions: List<Pair<String, String>> = listOf(
+        Pair("Which tribe did Boudica belong to?", "The Iceni"),
+        Pair("Who was Henry the VIII's last wife?", "Katherine Parr")
+    )
     var correctAnswers by remember { mutableIntStateOf(0) }
 
     NavHost(
