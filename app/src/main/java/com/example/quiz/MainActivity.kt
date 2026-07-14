@@ -57,7 +57,8 @@ fun Quiz(
         contentAlignment = Alignment.Center,
         modifier = modifier
     ) {
-        var questionInput by remember { mutableStateOf("")}
+        var answerInput by remember { mutableStateOf("")}
+        var message: String
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -71,17 +72,26 @@ fun Quiz(
             Spacer(
                 Modifier.height(25.dp)
             )
-            EditAnswerField( value = questionInput, onValueChange = { questionInput = it})
+            EditAnswerField( value = answerInput, onValueChange = { answerInput = it})
             Spacer(
                 Modifier.height(25.dp)
             )
             Button(
                 onClick = {
+                    // take / save? current answerInput value
+                    val userAnswer: String = answerInput
                     // reset to 0
-                    // take current userAnswer value
+                    answerInput = ""
+
+                    if (userAnswer === answer) {
+                      message = "Correct!"
+                    } else {
+                       message = "Try again"
+                    }
                     // check if it's equal to answer (with regex?)
                     // Display a different message if it matches or not
-                }
+                },
+                modifier = modifier
             ) {
                 Text(
                     text = stringResource(R.string.button_label)
