@@ -25,7 +25,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.quiz.ui.theme.QuizTheme
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,18 +41,40 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(), // is this necessary? without it, text not vertically aligned
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Quiz(
-                        question = "Which tribe did Boudica belong to?",
-                        answer = "The Iceni",
-                    )
+                    App()
                 }
             }
         }
     }
 }
 
+
 @Composable
-fun Quiz(
+fun App() {
+
+    val navController = rememberNavController()
+
+    NavHost(
+        navController = navController, startDestination = "questionOne"
+    ){
+        composable(route = "questionOne") {
+            QuestionScreen(
+                question = "Which tribe did Boudica belong to?",
+                answer = "The Iceni",
+            )
+        }
+        composable(route = "questionTwo") {
+            QuestionScreen(
+                question = "Who was Henry the VIII's last wife?",
+                answer = "Katherine Parr",
+            )
+        }
+    }
+}
+
+
+@Composable
+fun QuestionScreen(
     question: String, // should these all go inside the function?
     answer: String,
     modifier: Modifier = Modifier
@@ -83,7 +109,6 @@ fun Quiz(
                     val userAnswer: String = answerInput.trim()
                     // reset to 0
                     answerInput = ""
-                    // check if it's equal to answer (with regex?)
                     val answerRegex = Regex(answer.trim(), RegexOption.IGNORE_CASE)
                     messageProperties = if (answerRegex.containsMatchIn(userAnswer)) Pair("Correct!", Color.Green) else Pair("Try again", Color.Red)
                 },
@@ -121,8 +146,13 @@ fun EditAnswerField(
 
 @Preview(showBackground = true)
 @Composable
-fun QuizPreview() {
+fun QuestionScreenPreview() {
     QuizTheme {
-        Quiz("Android?", answer = "No")
+        QuestionScreen("Android?", answer = "No")
     }
+}
+
+@Composable
+fun FinalScoreScreen() {
+
 }
