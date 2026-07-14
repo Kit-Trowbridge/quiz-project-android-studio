@@ -53,6 +53,7 @@ class MainActivity : ComponentActivity() {
 fun App() {
 
     val navController = rememberNavController()
+    var correctAnswers by remember {mutableStateOf(0)}
 
     NavHost(
         navController = navController, startDestination = "questionOne"
@@ -61,28 +62,33 @@ fun App() {
             QuestionScreen(
                 question = "Which tribe did Boudica belong to?",
                 answer = "The Iceni",
-                onNextScreen = {navController.navigate("questionTwo")}
+                onNextScreen = {navController.navigate("questionTwo")},
+                correctAnswers = correctAnswers
             )
         }
         composable(route = "questionTwo") {
             QuestionScreen(
                 question = "Who was Henry the VIII's last wife?",
                 answer = "Katherine Parr",
-                onNextScreen = {navController.navigate("finalScore")} // do you always need onNextScreen in a route? No - it's only bc your button needs it
+                onNextScreen = {navController.navigate("finalScore")}, // do you always need onNextScreen in a route? No - it's only bc your button needs it
+                correctAnswers = correctAnswers
             )
         }
         composable(route = "finalScore") {
-            FinalScoreScreen()
+            FinalScoreScreen(
+                correctAnswers = correctAnswers
+            )
         }
     }
 }
 
 
-@Composable
+@Composabler
 fun QuestionScreen(
     onNextScreen: () -> Unit,
     question: String, // should these all go inside the function?
     answer: String,
+    correctAnswers: Int,
     modifier: Modifier = Modifier
 
 ) {
@@ -117,6 +123,7 @@ fun QuestionScreen(
                     answerInput = ""
                     val answerRegex = Regex(answer.trim(), RegexOption.IGNORE_CASE)
                     messageProperties = if (answerRegex.containsMatchIn(userAnswer)) Pair("Correct!", Color.Green) else Pair("Try again", Color.Red)
+                    correctAnswers += 1
                 },
                 modifier = modifier
             ) {
@@ -164,19 +171,20 @@ fun EditAnswerField(
 @Composable
 fun QuestionScreenPreview() {
     QuizTheme {
-        QuestionScreen(question = "Android?", answer = "No", onNextScreen = {})
+        QuestionScreen(question = "Android?", answer = "No", onNextScreen = {}, correctAnswers = 0) // is this right?
     }
 }
 
 @Composable
 fun FinalScoreScreen(
+    correctAnswers: Int,
     modifier: Modifier = Modifier
 ) {
     Box(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text="Your final score is: TBC",
+            text="Your final score is: ${correctAnswers}/2", // change from hardcoded once refactored
             modifier = modifier
                 .align(alignment = Alignment.Center)
         )
@@ -186,5 +194,7 @@ fun FinalScoreScreen(
 @Preview(showBackground = true)
 @Composable
 fun FinalScoreScreenPreview() {
-    FinalScoreScreen()
+    FinalScoreScreen(
+        correctAnswers = 0 // ?
+    )
 }
