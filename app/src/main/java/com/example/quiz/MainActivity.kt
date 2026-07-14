@@ -58,7 +58,7 @@ fun Quiz(
         modifier = modifier
     ) {
         var answerInput by remember { mutableStateOf("")}
-        var message: String
+        var message: String // need state here too?
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -82,14 +82,9 @@ fun Quiz(
                     val userAnswer: String = answerInput
                     // reset to 0
                     answerInput = ""
-
-                    if (userAnswer === answer) {
-                      message = "Correct!"
-                    } else {
-                       message = "Try again"
-                    }
                     // check if it's equal to answer (with regex?)
                     // Display a different message if it matches or not
+                    message = if (userAnswer === answer) "Correct!" else "Try again"
                 },
                 modifier = modifier
             ) {
@@ -97,8 +92,13 @@ fun Quiz(
                     text = stringResource(R.string.button_label)
                 )
             }
+            Spacer(
+                Modifier.height(25.dp)
+            )
+            Text(
+                text = message
+            )
         }
-
     }
 }
 
