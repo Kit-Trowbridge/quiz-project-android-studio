@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -53,7 +54,7 @@ class MainActivity : ComponentActivity() {
 fun App() {
 
     val navController = rememberNavController()
-    var correctAnswers by remember {mutableStateOf(0)}
+    var correctAnswers by remember { mutableIntStateOf(0) }
 
     NavHost(
         navController = navController, startDestination = "questionOne"
@@ -63,7 +64,8 @@ fun App() {
                 question = "Which tribe did Boudica belong to?",
                 answer = "The Iceni",
                 onNextScreen = {navController.navigate("questionTwo")},
-                correctAnswers = correctAnswers
+                correctAnswers = correctAnswers,
+                onCorrectAnswer = { correctAnswers += 1 }
             )
         }
         composable(route = "questionTwo") {
@@ -71,7 +73,8 @@ fun App() {
                 question = "Who was Henry the VIII's last wife?",
                 answer = "Katherine Parr",
                 onNextScreen = {navController.navigate("finalScore")}, // do you always need onNextScreen in a route? No - it's only bc your button needs it
-                correctAnswers = correctAnswers
+                correctAnswers = correctAnswers,
+                onCorrectAnswer = { correctAnswers += 1 }
             )
         }
         composable(route = "finalScore") {
@@ -83,12 +86,13 @@ fun App() {
 }
 
 
-@Composabler
+@Composable
 fun QuestionScreen(
     onNextScreen: () -> Unit,
     question: String, // should these all go inside the function?
     answer: String,
     correctAnswers: Int,
+    onCorrectAnswer: () -> Unit,
     modifier: Modifier = Modifier
 
 ) {
@@ -123,7 +127,7 @@ fun QuestionScreen(
                     answerInput = ""
                     val answerRegex = Regex(answer.trim(), RegexOption.IGNORE_CASE)
                     messageProperties = if (answerRegex.containsMatchIn(userAnswer)) Pair("Correct!", Color.Green) else Pair("Try again", Color.Red)
-                    correctAnswers += 1
+                    onCorrectAnswer()
                 },
                 modifier = modifier
             ) {
@@ -171,7 +175,7 @@ fun EditAnswerField(
 @Composable
 fun QuestionScreenPreview() {
     QuizTheme {
-        QuestionScreen(question = "Android?", answer = "No", onNextScreen = {}, correctAnswers = 0) // is this right?
+        QuestionScreen(question = "Android?", answer = "No", onNextScreen = {}, correctAnswers = 0, onCorrectAnswer = {}) // is this right?
     }
 }
 
