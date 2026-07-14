@@ -12,6 +12,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -38,12 +42,13 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Quiz(
-    question: String,
+    question: String, // should these all go inside the function?
     answer: String,
-    userAnswer: String = "",
     modifier: Modifier = Modifier
 
 ) {
+    var questionInput by remember { mutableStateOf("")}
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -53,7 +58,7 @@ fun Quiz(
             modifier = modifier
                 .align(Alignment.CenterHorizontally)
         )
-        EditAnswerField()
+        EditAnswerField( value = questionInput, onValueChange = { questionInput = it})
         Button(
             onClick = {}
         ) {
@@ -67,11 +72,15 @@ fun Quiz(
 }
 
 @Composable
-fun EditAnswerField(modifier: Modifier = Modifier) {
+fun EditAnswerField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     TextField(
         label = { Text(stringResource(R.string.input_label)) },
-        value = "TEST VALUE",
-        onValueChange = {},
+        value = value,
+        onValueChange = onValueChange,
         modifier = modifier
     )
 }
