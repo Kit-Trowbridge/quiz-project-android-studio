@@ -61,13 +61,18 @@ fun App() {
             QuestionScreen(
                 question = "Which tribe did Boudica belong to?",
                 answer = "The Iceni",
+                onNextScreen = {navController.navigate("questionTwo")}
             )
         }
         composable(route = "questionTwo") {
             QuestionScreen(
                 question = "Who was Henry the VIII's last wife?",
                 answer = "Katherine Parr",
+                onNextScreen = {navController.navigate("finalScore")} // do you always need onNextScreen in a route? No - it's only bc your button needs it
             )
+        }
+        composable(route = "finalScore") {
+            FinalScoreScreen()
         }
     }
 }
@@ -75,6 +80,7 @@ fun App() {
 
 @Composable
 fun QuestionScreen(
+    onNextScreen: () -> Unit,
     question: String, // should these all go inside the function?
     answer: String,
     modifier: Modifier = Modifier
@@ -125,6 +131,16 @@ fun QuestionScreen(
                 text = messageText,
                 color = messageColor
             )
+            Spacer(
+                Modifier.height(25.dp)
+            )
+            Button(
+                onClick = onNextScreen,
+                modifier = modifier
+                    .align(alignment = Alignment.End)
+            ) {
+                Text("Next")
+            } // should update so that you go automatically to next screen with correct answer
         }
     }
 }
@@ -148,11 +164,27 @@ fun EditAnswerField(
 @Composable
 fun QuestionScreenPreview() {
     QuizTheme {
-        QuestionScreen("Android?", answer = "No")
+        QuestionScreen(question = "Android?", answer = "No", onNextScreen = {})
     }
 }
 
 @Composable
-fun FinalScoreScreen() {
+fun FinalScoreScreen(
+    modifier: Modifier = Modifier
+) {
+    Box(
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text="Your final score is: TBC",
+            modifier = modifier
+                .align(alignment = Alignment.Center)
+        )
+    }
+}
 
+@Preview(showBackground = true)
+@Composable
+fun FinalScoreScreenPreview() {
+    FinalScoreScreen()
 }
