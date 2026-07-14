@@ -125,9 +125,12 @@ fun QuestionScreen(
                     val userAnswer: String = answerInput.trim()
                     // reset to 0
                     answerInput = ""
+
                     val answerRegex = Regex(answer.trim(), RegexOption.IGNORE_CASE)
-                    messageProperties = if (answerRegex.containsMatchIn(userAnswer)) Pair("Correct!", Color.Green) else Pair("Try again", Color.Red)
-                    if (messageProperties.first == "Correct!" ) onCorrectAnswer()
+                    val isCorrect = answerRegex.containsMatchIn(userAnswer)
+
+                    messageProperties = if (isCorrect) Pair("Correct!", Color.Green) else Pair("Try again", Color.Red)
+                    if (isCorrect) onCorrectAnswer()
                 },
                 modifier = modifier
             ) {
