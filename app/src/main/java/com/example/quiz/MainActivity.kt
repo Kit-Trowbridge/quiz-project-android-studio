@@ -4,11 +4,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -20,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.quiz.ui.theme.QuizTheme
 
 class MainActivity : ComponentActivity() {
@@ -28,11 +32,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             QuizTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Surface(
+                    modifier = Modifier.fillMaxSize(), // is this necessary? without it, text not vertically aligned
+                    color = MaterialTheme.colorScheme.background
+                ) {
                     Quiz(
                         question = "Which tribe did Boudica belong to?",
                         answer = "The Iceni",
-                        modifier = Modifier.padding(innerPadding)
                     )
                 }
             }
@@ -47,28 +53,43 @@ fun Quiz(
     modifier: Modifier = Modifier
 
 ) {
-    var questionInput by remember { mutableStateOf("")}
-
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Box(
+        contentAlignment = Alignment.Center,
         modifier = modifier
     ) {
-        Text(
-            text = question,
+        var questionInput by remember { mutableStateOf("")}
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier
-                .align(Alignment.CenterHorizontally)
-        )
-        EditAnswerField( value = questionInput, onValueChange = { questionInput = it})
-        Button(
-            onClick = {}
         ) {
             Text(
-                text = stringResource(R.string.button_label)
+                text = question,
+                modifier = modifier
+                    .align(Alignment.CenterHorizontally)
             )
+            Spacer(
+                Modifier.height(25.dp)
+            )
+            EditAnswerField( value = questionInput, onValueChange = { questionInput = it})
+            Spacer(
+                Modifier.height(25.dp)
+            )
+            Button(
+                onClick = {
+                    // reset to 0
+                    // take current userAnswer value
+                    // check if it's equal to answer (with regex?)
+                    // Display a different message if it matches or not
+                }
+            ) {
+                Text(
+                    text = stringResource(R.string.button_label)
+                )
+            }
         }
+
     }
-
-
 }
 
 @Composable
@@ -79,6 +100,7 @@ fun EditAnswerField(
 ) {
     TextField(
         label = { Text(stringResource(R.string.input_label)) },
+        singleLine = true,
         value = value,
         onValueChange = onValueChange,
         modifier = modifier
