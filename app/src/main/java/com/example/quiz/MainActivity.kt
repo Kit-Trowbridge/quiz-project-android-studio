@@ -58,7 +58,7 @@ fun Quiz(
         modifier = modifier
     ) {
         var answerInput by remember { mutableStateOf("")}
-        var message: String // need state here too?
+        var message by remember { mutableStateOf("")}
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -85,6 +85,8 @@ fun Quiz(
                     // check if it's equal to answer (with regex?)
                     // Display a different message if it matches or not
                     message = if (userAnswer === answer) "Correct!" else "Try again"
+                    // would also like to change color accordingly -- how to affect modifier in state
+                    // maybe assign to variable
                 },
                 modifier = modifier
             ) {
