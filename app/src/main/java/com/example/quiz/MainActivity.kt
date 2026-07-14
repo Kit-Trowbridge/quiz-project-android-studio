@@ -80,11 +80,12 @@ fun Quiz(
             )
             Button(
                 onClick = {
-                    val userAnswer: String = answerInput
+                    val userAnswer: String = answerInput.trim()
                     // reset to 0
                     answerInput = ""
                     // check if it's equal to answer (with regex?)
-                    messageProperties = if (userAnswer == answer) Pair("Correct!", Color.Green) else Pair("Try again", Color.Red)
+                    val answerRegex = Regex(answer.trim(), RegexOption.IGNORE_CASE)
+                    messageProperties = if (answerRegex.containsMatchIn(userAnswer)) Pair("Correct!", Color.Green) else Pair("Try again", Color.Red)
                 },
                 modifier = modifier
             ) {
