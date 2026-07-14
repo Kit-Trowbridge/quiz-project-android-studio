@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Quiz</string>
+    <string name="button_label">Submit!</string>
+    <string name="input_label">Your answer</string>
 </resources>
