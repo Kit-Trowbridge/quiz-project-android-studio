@@ -65,6 +65,13 @@ class QuizViewModel(): ViewModel() {
         )
     ))
     val uiState: StateFlow<QuizState> = _uiState
+
+    // Gets the current QuizState, creates a copy with correctAnswers incremented by 1,
+    // and reassigns it to _uiState.value — overwriting the state and triggering
+    // recomposition in any composables observing it
+    fun onCorrectAnswer() {
+        _uiState.value = _uiState.value.copy(correctAnswers = _uiState.value.correctAnswers + 1)
+    }
 }
 
 
