@@ -87,7 +87,7 @@ fun App() {
                 correctAnswers = correctAnswers,
                 onCorrectAnswer = { correctAnswers += 1 },
                 onNextScreen = {navController.navigate(
-                    if (questions[nonNullId] !== questions[-1]) "questions/${nonNullId + 1}" else "finalScore"
+                    if (questions.lastIndex != nonNullId) "questions/${nonNullId + 1}" else "finalScore"
                 )}, // want to navigate to last screen if question is the last in the list
 
             )
