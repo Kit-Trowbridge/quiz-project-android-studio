@@ -15,6 +15,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -27,6 +28,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -76,14 +79,11 @@ class QuizViewModel(): ViewModel() {
 
 
 @Composable
-fun App() {
-
+fun App(
+    viewModel: QuizViewModel = viewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val navController = rememberNavController()
-    val questions: List<Pair<String, String>> = listOf(
-        Pair("Which tribe did Boudica belong to?", "The Iceni"),
-        Pair("Who was Henry the VIII's last wife?", "Katherine Parr")
-    )
-    var correctAnswers by remember { mutableIntStateOf(0) }
 
     NavHost(
         navController = navController, startDestination = "questions/0"
@@ -98,18 +98,18 @@ fun App() {
 
             QuestionScreen(
                 id = nonNullId,
-                questions = questions,
-                onCorrectAnswer = { correctAnswers += 1 },
+                questions = uiState.questions, // how to access value in uiState
+                onCorrectAnswer = { viewModel.onCorrectAnswer() }, // how to call custom ViewModel method
                 onNextScreen = {navController.navigate(
-                    if (questions.lastIndex != nonNullId) "questions/${nonNullId + 1}" else "finalScore"
+                    if (uiState.questions.lastIndex != nonNullId) "questions/${nonNullId + 1}" else "finalScore"
                 )}, // want to navigate to last screen if question is the last in the list
 
             )
         }
         composable(route = "finalScore") {
             FinalScoreScreen(
-                numOfQuestions = questions.size,
-                correctAnswers = correctAnswers
+                numOfQuestions = uiState.questions.size,
+                correctAnswers = uiState.correctAnswers
             )
         }
     }
@@ -118,6 +118,7 @@ fun App() {
 
 @Composable
 fun QuestionScreen(
+
     id: Int,
     questions: List<Pair<String, String>>,
     onCorrectAnswer: () -> Unit,
@@ -210,7 +211,7 @@ fun EditAnswerField(
 @Composable
 fun QuestionScreenPreview() {
     QuizTheme {
-        QuestionScreen(id = 0, questions = listOf(Pair("Question1", "Answer1")), onNextScreen = {}, onCorrectAnswer = {}) // is this right?
+        QuestionScreen(id = 0, questions = listOf(Pair("Question1", "Answer1")), onNextScreen = {}, onCorrectAnswer = {})
     }
 }
 
@@ -236,6 +237,6 @@ fun FinalScoreScreen(
 fun FinalScoreScreenPreview() {
     FinalScoreScreen(
         numOfQuestions = 1,
-        correctAnswers = 0 // ?
+        correctAnswers = 0
     )
 }
