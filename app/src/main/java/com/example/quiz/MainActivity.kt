@@ -31,6 +31,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.quiz.ui.theme.QuizTheme
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 
 class MainActivity : ComponentActivity() {
@@ -50,14 +52,20 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-//data class QuizState(
-//    val questions: List<Pair<String, String>>,
-//    val currentQuestionIndex: Int = 0
-//)
-//
-//class QuizViewModel: ViewModel() {
-//
-//}
+data class QuizState(
+    val questions: List<Pair<String, String>>,
+    val correctAnswers: Int = 0 //
+)
+
+class QuizViewModel(): ViewModel() {
+    private val _uiState = MutableStateFlow(QuizState(
+        listOf(
+            Pair("Which tribe did Boudica belong to?", "The Iceni"),
+            Pair("Who was Henry the VIII's last wife?", "Katherine Parr")
+        )
+    ))
+    val uiState: StateFlow<QuizState> = _uiState
+}
 
 
 @Composable
