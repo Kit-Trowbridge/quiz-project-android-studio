@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -49,6 +50,15 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+//data class QuizState(
+//    val questions: List<Pair<String, String>>,
+//    val currentQuestionIndex: Int = 0
+//)
+//
+//class QuizViewModel: ViewModel() {
+//
+//}
+
 
 @Composable
 fun App() {
@@ -61,26 +71,36 @@ fun App() {
     var correctAnswers by remember { mutableIntStateOf(0) }
 
     NavHost(
-        navController = navController, startDestination = "questionOne"
+        navController = navController, startDestination = "questions/0"
     ){
-        composable(route = "questionOne") {
+        composable(route = "questions/{id}") {
+
+            val id = it.arguments?.getString("id")
+            val nonNullId = requireNotNull(id?.toInt()) { "Id does not exist" } // if id exists,
+            // the value of nonNullId will be the id converted to an Int
+            // otherwise will throw the error
+
+
             QuestionScreen(
-                question = "Which tribe did Boudica belong to?",
-                answer = "The Iceni",
-                onNextScreen = {navController.navigate("questionTwo")},
+                id = nonNullId,
+                questions = questions,
                 correctAnswers = correctAnswers,
-                onCorrectAnswer = { correctAnswers += 1 }
+                onCorrectAnswer = { correctAnswers += 1 },
+                onNextScreen = {navController.navigate(
+                    if (questions[nonNullId] !== questions[-1]) "questions/${nonNullId + 1}" else "finalScore"
+                )}, // want to navigate to last screen if question is the last in the list
+
             )
         }
-        composable(route = "questionTwo") {
-            QuestionScreen(
-                question = "Who was Henry the VIII's last wife?",
-                answer = "Katherine Parr",
-                onNextScreen = {navController.navigate("finalScore")}, // do you always need onNextScreen in a route? No - it's only bc your button needs it
-                correctAnswers = correctAnswers,
-                onCorrectAnswer = { correctAnswers += 1 }
-            )
-        }
+//        composable(route = "questionTwo") {
+//            QuestionScreen(
+//                question = "Who was Henry the VIII's last wife?",
+//                answer = "Katherine Parr",
+//                onNextScreen = {navController.navigate("finalScore")}, // do you always need onNextScreen in a route? No - it's only bc your button needs it
+//                correctAnswers = correctAnswers,
+//                onCorrectAnswer = { correctAnswers += 1 }
+//            )
+//        }
         composable(route = "finalScore") {
             FinalScoreScreen(
                 correctAnswers = correctAnswers
@@ -92,14 +112,17 @@ fun App() {
 
 @Composable
 fun QuestionScreen(
-    onNextScreen: () -> Unit,
-    question: String, // should these all go inside the function?
-    answer: String,
+    id: Int,
+    questions: List<Pair<String, String>>,
     correctAnswers: Int,
     onCorrectAnswer: () -> Unit,
+    onNextScreen: () -> Unit,
     modifier: Modifier = Modifier
 
 ) {
+    val question = questions[id].first
+    val answer = questions[id].second
+
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
