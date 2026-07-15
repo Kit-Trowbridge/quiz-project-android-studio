@@ -84,7 +84,6 @@ fun App() {
             QuestionScreen(
                 id = nonNullId,
                 questions = questions,
-                correctAnswers = correctAnswers,
                 onCorrectAnswer = { correctAnswers += 1 },
                 onNextScreen = {navController.navigate(
                     if (questions.lastIndex != nonNullId) "questions/${nonNullId + 1}" else "finalScore"
@@ -92,17 +91,9 @@ fun App() {
 
             )
         }
-//        composable(route = "questionTwo") {
-//            QuestionScreen(
-//                question = "Who was Henry the VIII's last wife?",
-//                answer = "Katherine Parr",
-//                onNextScreen = {navController.navigate("finalScore")}, // do you always need onNextScreen in a route? No - it's only bc your button needs it
-//                correctAnswers = correctAnswers,
-//                onCorrectAnswer = { correctAnswers += 1 }
-//            )
-//        }
         composable(route = "finalScore") {
             FinalScoreScreen(
+                numOfQuestions = questions.size,
                 correctAnswers = correctAnswers
             )
         }
@@ -114,7 +105,6 @@ fun App() {
 fun QuestionScreen(
     id: Int,
     questions: List<Pair<String, String>>,
-    correctAnswers: Int,
     onCorrectAnswer: () -> Unit,
     onNextScreen: () -> Unit,
     modifier: Modifier = Modifier
@@ -205,12 +195,13 @@ fun EditAnswerField(
 @Composable
 fun QuestionScreenPreview() {
     QuizTheme {
-        QuestionScreen(question = "Android?", answer = "No", onNextScreen = {}, correctAnswers = 0, onCorrectAnswer = {}) // is this right?
+        QuestionScreen(id = 0, questions = listOf(Pair("Question1", "Answer1")), onNextScreen = {}, onCorrectAnswer = {}) // is this right?
     }
 }
 
 @Composable
 fun FinalScoreScreen(
+    numOfQuestions: Int,
     correctAnswers: Int,
     modifier: Modifier = Modifier
 ) {
@@ -218,7 +209,7 @@ fun FinalScoreScreen(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text="Your final score is: ${correctAnswers}/2", // change from hardcoded once refactored
+            text="Your final score is: ${correctAnswers}/${numOfQuestions}",
             modifier = modifier
                 .align(alignment = Alignment.Center)
         )
@@ -229,6 +220,7 @@ fun FinalScoreScreen(
 @Composable
 fun FinalScoreScreenPreview() {
     FinalScoreScreen(
+        numOfQuestions = 1,
         correctAnswers = 0 // ?
     )
 }
